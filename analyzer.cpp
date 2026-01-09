@@ -27,7 +27,7 @@ int TripAnalyzer::extractHour(const string& dateTimeStr) {
     }
 }
 
-void TripAnalyzer::ingestFile(const std::string& filePath) {
+void TripAnalyzer::ingestFile(const string& filePath) {
     ifstream infile(filePath);
     if (!infile.is_open()) return;
 
@@ -94,4 +94,8 @@ vector<SlotRecord> TripAnalyzer::topBusySlots() {
 
     if (result.size() > 10) result.resize(10);
     return result;
+}
+
+bool TripAnalyzer::empty() const {
+    return !hasData;
 }

@@ -1,26 +1,35 @@
-#pragma once
+#ifndef ANALYZER_H
+#define ANALYZER_H
+
 #include <string>
 #include <vector>
+#include <unordered_map>
 
-struct ZoneCount {
+struct ZoneRecord {
     std::string zone;
-    long long count;
+    int count;
 };
 
-struct SlotCount {
+struct SlotRecord {
     std::string zone;
-    int hour;              // 0–23
-    long long count;
+    int hour;
+    int count;
 };
 
 class TripAnalyzer {
+private:
+    std::unordered_map<std::string, int> zoneCounts;
+    std::unordered_map<std::string, int> slotCounts;
+    bool hasData = false;
+
+    std::string trim(const std::string& str);
+    int extractHour(const std::string& dateTimeStr);
+
 public:
-    // Parse Trips.csv, skip dirty rows, never crash
-    void ingestFile(const std::string& csvPath);
-
-    // Top K zones: count desc, zone asc
-    std::vector<ZoneCount> topZones(int k = 10) const;
-
-    // Top K slots: count desc, zone asc, hour asc
-    std::vector<SlotCount> topBusySlots(int k = 10) const;
+    void ingestFile(const std::string& filePath);
+    std::vector<ZoneRecord> topZones();
+    std::vector<SlotRecord> topBusySlots();
+    bool empty() const { return !hasData; }
 };
+
+#endif

@@ -29,7 +29,7 @@ public:
     void ingestFile(const std::string& filePath);
     std::vector<ZoneRecord> topZones();
     std::vector<SlotRecord> topBusySlots();
-    bool empty() const { return !hasData; }
+    bool empty() const;
 };
 
 #endif

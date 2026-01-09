@@ -5,12 +5,12 @@
 #include <vector>
 #include <unordered_map>
 
-struct ZoneCount {
+struct ZoneRecord {
     std::string zone;
     int count;
 };
 
-struct SlotCount {
+struct SlotRecord {
     std::string zone;
     int hour;
     int count;
@@ -20,14 +20,16 @@ class TripAnalyzer {
 private:
     std::unordered_map<std::string, int> zoneCounts;
     std::unordered_map<std::string, int> slotCounts;
+    bool hasData = false;
 
     std::string trim(const std::string& str);
     int extractHour(const std::string& dateTimeStr);
 
 public:
     void ingestFile(const std::string& filePath);
-    std::vector<ZoneCount> topZones(int n);
-    std::vector<SlotCount> topBusySlots(int n);
+    std::vector<ZoneRecord> topZones();
+    std::vector<SlotRecord> topBusySlots();
+    bool empty() const { return !hasData; }
 };
 
 #endif

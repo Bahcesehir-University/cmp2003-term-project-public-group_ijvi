@@ -53,30 +53,29 @@ void TripAnalyzer::ingestFile(const string& filePath) {
         int hour = extractHour(pickupDateTime);
         if (hour < 0 || hour > 23) continue;
 
-        hasData = true;
         zoneCounts[pickupZone]++;
         string slotKey = pickupZone + "_" + to_string(hour);
         slotCounts[slotKey]++;
     }
 }
 
-vector<ZoneRecord> TripAnalyzer::topZones() {
-    vector<ZoneRecord> result;
+vector<ZoneCount> TripAnalyzer::topZones(int n) {
+    vector<ZoneCount> result;
     for (const auto& pair : zoneCounts) {
         result.push_back({pair.first, pair.second});
     }
 
-    sort(result.begin(), result.end(), [](const ZoneRecord& a, const ZoneRecord& b) {
+    sort(result.begin(), result.end(), [](const ZoneCount& a, const ZoneCount& b) {
         if (a.count != b.count) return a.count > b.count;
         return a.zone < b.zone;
     });
 
-    if (result.size() > 10) result.resize(10);
+    if ((size_t)n < result.size()) result.resize((size_t)n);
     return result;
 }
 
-vector<SlotRecord> TripAnalyzer::topBusySlots() {
-    vector<SlotRecord> result;
+vector<SlotCount> TripAnalyzer::topBusySlots(int n) {
+    vector<SlotCount> result;
     for (const auto& pair : slotCounts) {
         size_t pos = pair.first.find_last_of('_');
         if (pos == string::npos) continue;
@@ -86,12 +85,12 @@ vector<SlotRecord> TripAnalyzer::topBusySlots() {
         result.push_back({zone, hour, pair.second});
     }
 
-    sort(result.begin(), result.end(), [](const SlotRecord& a, const SlotRecord& b) {
+    sort(result.begin(), result.end(), [](const SlotCount& a, const SlotCount& b) {
         if (a.count != b.count) return a.count > b.count;
         if (a.zone != b.zone) return a.zone < b.zone;
         return a.hour < b.hour;
     });
 
-    if (result.size() > 10) result.resize(10);
+    if ((size_t)n < result.size()) result.resize((size_t)n);
     return result;
 }
